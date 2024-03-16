@@ -3,7 +3,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function AppLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs className="bg-blue-950" screenOptions={{ headerShown: false }}>
       <Tabs.Screen
         name="index"
         options={{
