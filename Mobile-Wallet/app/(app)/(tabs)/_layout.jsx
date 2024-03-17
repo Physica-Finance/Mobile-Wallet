@@ -1,8 +1,6 @@
-import { Stack, Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { themeColor } from "../../../constants/themeColor";
-import { StyledView, StyledText, Style } from "../../../constants/styledComponents";
 
 export default function AppLayout() {
   return (
@@ -31,7 +29,7 @@ export default function AppLayout() {
         name="discover"
         options={{
           title: "Discover",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="compass" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="bandcamp" color={color} />,
         }}
       />
       <Tabs.Screen
