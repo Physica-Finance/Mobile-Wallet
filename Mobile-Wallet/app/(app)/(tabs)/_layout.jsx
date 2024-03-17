@@ -1,9 +1,18 @@
 import { Stack, Tabs } from "expo-router";
+import { Platform } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { themeColor } from "../../../constants/themeColor";
+import { StyledView, StyledText, Style } from "../../../constants/styledComponents";
 
 export default function AppLayout() {
   return (
-    <Tabs className="bg-blue-950" screenOptions={{ headerShown: false }}>
+    <Tabs screenOptions={{
+      headerShown: false, tabBarStyle: {
+        backgroundColor: themeColor.appBackgroundColor,
+        shadowOpacity: .5,
+        shadowColor: themeColor.appBackgroundColor
+      },
+    }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -15,7 +24,21 @@ export default function AppLayout() {
         name="portofolio"
         options={{
           title: "Portofolio",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="pie-chart" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="pie-chart" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="discover"
+        options={{
+          title: "Discover",
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="compass" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={{
+          title: "Chats",
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="comments" color={color} />,
         }}
       />
       <Tabs.Screen
