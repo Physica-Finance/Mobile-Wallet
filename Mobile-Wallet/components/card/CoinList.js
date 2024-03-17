@@ -1,9 +1,10 @@
 import React from 'react';
 import { StyledView, StyledText, StyledImage, StyledFlatList } from "../../constants/styledComponents"
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { themeColor } from '../../constants/themeColor';
 
 const CardList = ({ item, setArrow = true }) => (
-    <StyledView className="flex flex-row h-auto justify-between py-3 px-5 my-2 items-center rounded-lg bg-blue-900">
+    <StyledView className="flex flex-row h-auto justify-between py-3 px-5 my-2 items-center rounded-lg" style={{ backgroundColor: themeColor.cardBackgroundColor }}>
         <StyledImage style={{ width: 48, height: 48 }} // Use style prop for Image dimensions
             source={{ uri: item.img }}
         />

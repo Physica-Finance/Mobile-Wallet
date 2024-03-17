@@ -7,4 +7,5 @@ export const themeColor = {
   buttonPrimaryTextColor: "#fff",
   buttonOutlineBackgroundColor: "#3671E9",
   buttonOutlineTextColor: "#fff",
+  cardBackgroundColor : "#001431"
 };

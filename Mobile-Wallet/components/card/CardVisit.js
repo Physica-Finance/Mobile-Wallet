@@ -5,7 +5,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 export function CardVisit({ title, onPress }) {
   return (
     <StyledTouchableOpacity onPress={onPress} className='w-full'>
-      <StyledImageBackground className='container my-5 max-h-48'
+      <StyledImageBackground className='container my-5 max-h-48 w-full'
         imageStyle={{ borderRadius: 10, backgroundSize: "cover" }}
         source={require('../../assets/card/bg-card-discover.png')}
       >
