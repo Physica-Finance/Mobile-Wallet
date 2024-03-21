@@ -7,12 +7,5 @@ export const themeColor = {
   buttonPrimaryTextColor: "#fff",
   buttonOutlineBackgroundColor: "#3671E9",
   buttonOutlineTextColor: "#fff",
-  disabledButtonBackgroundColor: "#e5dee3",
-  disabledButtonTextColor: "#aba1a9",
-  neutralColor: "#B3B3B3",
-  checkedColor: "#55FE66",
-  errorColor: "#FF0000",
-  modalBottomBackgroundColor: "#121212",
-  cardBackgroundColor: "#333333",
-  phraseBorderColor: "#388BFF",
+  cardBackgroundColor : "#001431"
 };
