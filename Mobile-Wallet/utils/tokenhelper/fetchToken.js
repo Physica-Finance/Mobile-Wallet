@@ -1,8 +1,8 @@
-const axios = require('axios');
+import { get } from 'axios';
 
 async function fetchTokenAssets(url) {
   try {
-    const response = await axios.get(url);
+    const response = await get(url);
     const data = response.data;
 
     let filteredData;
@@ -31,4 +31,4 @@ async function fetchTokenAssets(url) {
   }
 }
 
-module.exports = { fetchTokenAssets };
+export default { fetchTokenAssets };
