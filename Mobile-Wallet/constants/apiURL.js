@@ -1,0 +1,1 @@
+export const FECTH_TOKEN = 'https://raw.githubusercontent.com/Physica-Finance/token-list/main/token.json'

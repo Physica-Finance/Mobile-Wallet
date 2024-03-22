@@ -16,6 +16,7 @@
     "@expo/metro-config": "^0.10.0",
     "@expo/vector-icons": "^14.0.0",
     "@hanchon/evmosjs": "^0.3.0",
+    "axios": "^1.6.8",
     "bech32": "^2.0.0",
     "buffer": "^6.0.3",
     "ethers": "^6.11.1",

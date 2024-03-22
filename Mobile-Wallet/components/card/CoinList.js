@@ -6,13 +6,13 @@ import { themeColor } from '../../constants/themeColor';
 const CardList = ({ item, setArrow = true }) => (
     <StyledView className="flex flex-row h-auto justify-between py-3 px-5 my-2 items-center rounded-lg" style={{ backgroundColor: themeColor.cardBackgroundColor }}>
         <StyledImage style={{ width: 48, height: 48 }} // Use style prop for Image dimensions
-            source={{ uri: item.img }}
+            source={{ uri: item.logoURI }}
         />
         <StyledView className='space-y-2 basis-1/2'>
-            <StyledText className="font-semibold text-lg text-white">{item.coin}</StyledText>
-            <StyledText className="font-semibold text-sm text-gray-400">{item.ticker}</StyledText>
+            <StyledText className="font-semibold text-lg text-white">{item.name}</StyledText>
+            <StyledText className="font-semibold text-sm text-gray-400">{item.symbol}</StyledText>
         </StyledView>
-        <StyledText className="font-semibold text-lg text-right text-white">{item.price}</StyledText>
+        <StyledText className="font-semibold text-lg text-right text-white">${item.decimals}</StyledText>
         {setArrow ? <FontAwesome size={16} name="chevron-right" color={"gray"} /> : ""}
     </StyledView>
 );
