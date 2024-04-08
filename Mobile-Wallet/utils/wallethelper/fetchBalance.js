@@ -12,4 +12,3 @@ export const fetchEthBalance = async (ethAddress, providerUrl) => {
     throw new Error('Failed to fetch balance');
   }
 };
-
