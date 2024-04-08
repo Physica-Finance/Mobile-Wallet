@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const DiscoverPage = () => {
   const [webViewUrl, setWebViewUrl] = useState('');
   const [showWebView, setShowWebView] = useState(false);
-  const [canGoBack, setCanGoBack] = useState(false); // Track if the WebView can go back
+  const [canGoBack, setCanGoBack] = useState(false); 
   const webViewRef = useRef(null);
 
   const visitUrl = (url) => {

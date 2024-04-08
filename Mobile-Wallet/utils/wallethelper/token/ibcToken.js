@@ -1,0 +1,10 @@
+export const IBC_TOKENS = [
+    {
+      denom: 'ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B',
+      tokenName: 'OSMO',
+    },
+    {
+        denom: 'ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E',
+        tokenName: 'ATOM',
+      }
+  ];
