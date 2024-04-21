@@ -1,68 +1,209 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView } from 'react-native';
+import io from 'socket.io-client';
 
-export default function ChatsPage() {
-  // Mock chat messages
-  const messages = [
-    { id: 1, text: "Hello! How are you?", sender: "Alf.planq", timestamp: "10:00 AM" },
-    { id: 2, text: "I'm good, thanks! Working on a React Native app. You?", sender: "Jack.planq", timestamp: "10:02 AM" },
-    { id: 3, text: "Same here. Just getting started with something new.", sender: "Alf.planq", timestamp: "10:05 AM" }
-  ];
+const socket = io('http://194.163.150.181:4000');
+
+export default function ChatPage() {
+  const [inputMessage, setInputMessage] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [chatSessions, setChatSessions] = useState({}); // Object to store chat sessions
+
+  useEffect(() => {
+    // Fetch contacts from the server
+    fetchContacts();
+  }, []);
+
+  useEffect(() => {
+    if (selectedContact) {
+      // Load chat sessions for the selected contact
+      loadChatSession(selectedContact.id);
+    }
+  }, [selectedContact]);
+
+  useEffect(() => {
+    // Listen for incoming messages from the server
+    socket.on('chat message', ({ nickname, message, contactId }) => {
+      // Update the chat session for the appropriate contact
+      if (selectedContact && selectedContact.id === contactId) {
+        const updatedMessages = [...(chatSessions[selectedContact.id] || []), { nickname, message }];
+        setChatSessions(prevSessions => ({
+          ...prevSessions,
+          [selectedContact.id]: updatedMessages,
+        }));
+      }
+    });
+  }, [selectedContact, chatSessions]);
+
+  const fetchContacts = () => {
+    // Example API call to fetch contacts
+    // Replace this with your actual API call
+    const dummyContacts = [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+      { id: 3, name: 'Charlie' },
+    ];
+    setContacts(dummyContacts);
+  };
+
+  const loadChatSession = async (contactId) => {
+    try {
+      const response = await fetch(`http://194.163.150.181:3000/chatSessions/${contactId}`);
+      if (response.ok) {
+        const chatSession = await response.json();
+        setChatSessions(prevSessions => ({
+          ...prevSessions,
+          [contactId]: chatSession,
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading chat session:', error);
+    }
+  };
+
+  const sendMessage = () => {
+    if (inputMessage.trim() !== '' && selectedContact) {
+      socket.emit('chat message', { nickname, message: inputMessage, contactId: selectedContact.id });
+      setInputMessage('');
+      const updatedMessages = [...(chatSessions[selectedContact.id] || []), { nickname, message: inputMessage }];
+      setChatSessions(prevSessions => ({
+        ...prevSessions,
+        [selectedContact.id]: updatedMessages,
+      }));
+    }
+  };
+
+  const renderChatSession = () => {
+    if (!selectedContact) {
+      return (
+        <View style={styles.placeholderContainer}>
+          <Text style={styles.placeholderText}>Select a contact to start chatting</Text>
+        </View>
+      );
+    }
+    const sessionMessages = chatSessions[selectedContact.id] || [];
+    return (
+      <View style={styles.chatContainer}>
+        <FlatList
+          data={sessionMessages}
+          renderItem={({ item }) => (
+            <View style={styles.messageContainer}>
+              <Text style={styles.messageText}>{`${item.nickname}: ${item.message}`}</Text>
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          style={styles.messageList}
+        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={inputMessage}
+            onChangeText={setInputMessage}
+            placeholder="Type your message..."
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.content}>
-          <Text style={styles.text}>Chat</Text>
-        </View>
-        {messages.map(message => (
-          <View key={message.id} style={styles.message}>
-            <Text style={styles.messageSender}>{message.sender}</Text>
-            <Text style={styles.messageText}>{message.text}</Text>
-            <Text style={styles.messageTimestamp}>{message.timestamp}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+    <View style={styles.container}>
+      {!selectedContact && (
+        <ScrollView style={styles.sidebar}>
+          <FlatList
+            data={contacts}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.contactItem} onPress={() => setSelectedContact(item)}>
+                <Text style={styles.contactName}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        </ScrollView>
+      )}
+      {renderChatSession()}
+    </View>
   );
 }
 
-// Updated styles according to the provided theme
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    paddingTop: 50,
   },
-  scrollView: {
-    width: '100%',
+  sidebar: {
+    flex: 1,
+    borderRightWidth: 1,
+    borderRightColor: '#ccc',
+    paddingHorizontal: 10,
+    display: 'flex',
+    flexDirection: 'column',
   },
-  content: {
-    padding: 20,
+  contactItem: {
+    paddingVertical: 10,
   },
-  text: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+  contactName: {
+    fontSize: 16,
   },
-  message: {
-    backgroundColor: '#e0e0e0',
-    padding: 15,
-    marginVertical: 5,
-    marginHorizontal: 20,
+  chatContainer: {
+    flex: 3,
+  },
+  messageContainer: {
+    backgroundColor: '#f0f0f0',
     borderRadius: 10,
-  },
-  messageSender: {
-    fontWeight: 'bold',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginVertical: 5,
+    maxWidth: '80%',
+    alignSelf: 'flex-start',
   },
   messageText: {
-    marginTop: 5,
+    fontSize: 16,
   },
-  messageTimestamp: {
-    marginTop: 5,
-    fontSize: 12,
-    color: '#666',
-    alignSelf: 'flex-end',
+  messageList: {
+    flex: 1,
+    paddingHorizontal: 15,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    paddingVertical: 10,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginRight: 10,
+  },
+  sendButton: {
+    backgroundColor: 'blue',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  sendButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    fontSize: 18,
   },
 });

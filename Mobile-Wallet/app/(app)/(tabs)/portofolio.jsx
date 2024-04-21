@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 import * as SecureStore from 'expo-secure-store';
 import { themeColor } from '../../../constants/themeColor';
 import { StyledView } from "../../../constants/styledComponents";
@@ -11,6 +12,9 @@ import { fetchTokenBalance } from '../../../utils/wallethelper/fetchTokenBalance
 import { fetchEthBalance } from '../../../utils/wallethelper/fetchBalance';
 import { fetchIBCTokenBalance } from '../../../utils/wallethelper/fetchIbcBalances';
 import { IBC_TOKENS } from '../../../utils/wallethelper/token/ibcToken' 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 const ETH_RPC_PROVIDER = 'https://evm-rpc.planq.network/';
 const PLANQ_RPC_PROVIDER = 'https://rpc.planq.network';
@@ -26,12 +30,16 @@ const TOKEN_CONTRACTS = [
 ];
 
 export default function PortfolioPage() {
+  const navigation = useNavigation(); // Hook to access navigation
   const [ethAddress, setEthAddress] = useState('Loading...');
   const [planqAddress, setPlanqAddress] = useState('Loading...');
   const [ethBalance, setEthBalance] = useState('Loading...');
   const [planqBalance, setPlanqBalance] = useState('Loading...');
   const [tokenBalances, setTokenBalances] = useState([]);
-  const [ibcTokenBalances, setIbcTokenBalances] = useState([]); // New state for IBC token balances
+  const [ibcTokenBalances, setIbcTokenBalances] = useState([]);
+  const [walletAddress, setWalletAddress] = useState('');
+  const [isConnected, setIsConnected] = useState(false);
+  
 
   useEffect(() => {
     const fetchWalletDataAndBalances = async () => {
@@ -46,9 +54,10 @@ export default function PortfolioPage() {
         const walletData = JSON.parse(walletDataString);
         setEthAddress(walletData.ethAddress);
         setPlanqAddress(walletData.planqAddress);
-        console.log(walletData.planqAddress)
-        console.log(walletData.ethAddress)
+        console.log(walletData.planqAddress);
+        console.log(walletData.ethAddress);
   
+        
         const ethBalPromise = fetchEthBalance(walletData.ethAddress, ETH_RPC_PROVIDER);
         const tokenBalPromises = TOKEN_CONTRACTS.map(({ address, name }) =>
           fetchTokenBalance(walletData.ethAddress, ETH_RPC_PROVIDER, address)
@@ -70,9 +79,27 @@ export default function PortfolioPage() {
         console.error('Error retrieving wallet data and balances:', error);
       }
     };
+
+    const handleConnectWallet = async () => {
+      try {
+        if (!isConnected) {
+          await connect();
+          Alert.alert("Wallet Connected", `Connected: ${walletAddress}`);
+        } else {
+          await disconnect();
+          Alert.alert("Wallet Disconnected");
+        }
+      } catch (error) {
+        Alert.alert("Connection Error", error.message);
+      }
+    };
   
     fetchWalletDataAndBalances();
   }, []);
+
+  const handleSwap = () => {
+    navigation.navigate('SwapScreen'); // Navigate to the swap screen
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -91,6 +118,9 @@ export default function PortfolioPage() {
               <CardPortfolio title={name} amount={balance}  />
             </View>
           ))}
+          <TouchableOpacity onPress={handleSwap} style={styles.swapButton}>
+            <Text style={styles.swapButtonText}>Swap</Text>
+          </TouchableOpacity>
         </PullToRefreshScrollView>
       </StyledView>
     </SafeAreaView>
@@ -115,5 +145,18 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     marginBottom: 10, 
+  },
+  swapButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  swapButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

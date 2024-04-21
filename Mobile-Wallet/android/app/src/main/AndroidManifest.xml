@@ -25,8 +25,8 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="com.anonymous.MobileWallet"/>
         <data android:scheme="Mobile-Wallet"/>
+        <data android:scheme="com.anonymous.MobileWallet"/>
         <data android:scheme="exp+mobile-wallet"/>
       </intent-filter>
     </activity>

@@ -26,6 +26,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="swap"
+        options={{
+          title: "Swap",
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="exchange" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="discover"
         options={{
           title: "Discover",
