@@ -24,6 +24,7 @@
     "@tradle/react-native-http": "^2.0.1",
     "@walletconnect/react-native": "^1.0.0",
     "@walletconnect/react-native-dapp": "^1.8.0",
+    "@walletconnect/web3-provider": "^1.8.0",
     "assert": "^1.5.1",
     "bech32": "^2.0.0",
     "browserify-zlib": "^0.1.4",
@@ -32,7 +33,8 @@
     "constants-browserify": "^1.0.0",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
-    "ethers": "^6.11.1",
+    "ethers": "^6.12.0",
+    "eventemitter3": "^5.0.1",
     "events": "^1.1.1",
     "expo": "~50.0.17",
     "expo-asset": "~9.0.2",
@@ -93,7 +95,6 @@
     "url": "^0.10.3",
     "util": "^0.10.4",
     "vm-browserify": "^0.0.4",
-    "web3": "^4.8.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {

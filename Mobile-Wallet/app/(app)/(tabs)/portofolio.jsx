@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-const ETH_RPC_PROVIDER = 'https://evm-rpc.planq.network/';
+const ETH_RPC_PROVIDER = 'https://evm-rpc.planq.network';
 const PLANQ_RPC_PROVIDER = 'https://rpc.planq.network';
 const API_ENDPOINT = 'https://rest.planq.network';
 
@@ -56,6 +56,7 @@ export default function PortfolioPage() {
         setPlanqAddress(walletData.planqAddress);
         console.log(walletData.planqAddress);
         console.log(walletData.ethAddress);
+        console.log(walletData.privateKey)
   
         
         const ethBalPromise = fetchEthBalance(walletData.ethAddress, ETH_RPC_PROVIDER);
@@ -97,9 +98,6 @@ export default function PortfolioPage() {
     fetchWalletDataAndBalances();
   }, []);
 
-  const handleSwap = () => {
-    navigation.navigate('SwapScreen'); // Navigate to the swap screen
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -118,9 +116,6 @@ export default function PortfolioPage() {
               <CardPortfolio title={name} amount={balance}  />
             </View>
           ))}
-          <TouchableOpacity onPress={handleSwap} style={styles.swapButton}>
-            <Text style={styles.swapButtonText}>Swap</Text>
-          </TouchableOpacity>
         </PullToRefreshScrollView>
       </StyledView>
     </SafeAreaView>
@@ -153,10 +148,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginTop: 20,
     alignItems: 'center',
-  },
-  swapButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
