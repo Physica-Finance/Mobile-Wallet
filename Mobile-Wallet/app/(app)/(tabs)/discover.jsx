@@ -132,7 +132,7 @@ const DiscoverPage = () => {
 
   const handleGetTransactionByHash = async (method, params) => {
     try {
-      const txHash = params[0];  // The transaction hash is expected as the first parameter
+      const txHash = params[0];  
       const transaction = await walletHelper.getTransactionByHash(txHash);
       if (transaction) {
         sendResponse(method, transaction);
@@ -237,6 +237,9 @@ const DiscoverPage = () => {
         case 'eth_accounts':
           handleethAccounts(method);
           break;
+        case 'eth_signTypedData_v4':
+          handleSignTypedData(method, params);
+          break;
         case 'eth_requestAccounts':
           handleRequestAccounts(method);
           break;
@@ -287,6 +290,17 @@ const DiscoverPage = () => {
       sendErrorResponse(method, error.message);
     }
   };
+
+  const handleSignTypedData = async (method, params) => {
+    try {
+        const { domain, types, value } = params[0]; // Assuming params[0] is the structured data
+        const signature = await walletHelper.signTypedData(domain, types, value);
+        sendResponse(method, signature);
+    } catch (error) {
+        console.error('Error signing typed data:', error);
+        sendErrorResponse(method, error.message);
+    }
+};
 
 
 
@@ -369,6 +383,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: themeColor.appBackgroundColor,
+    marginTop: 20,
   },
   navbar: {
     flexDirection: 'row',

@@ -11,7 +11,7 @@ class CustomWalletHelper {
         '0x2105': 'https://base-pokt.nodies.app',
         '0x38': 'https://binance.llamarpc.com',
         '0x89': 'https://polygon-pokt.nodies.app'       
-        // other networks...
+
       };
       this.currentNetwork = '0x1b9e'; // Default network
     }
@@ -36,6 +36,20 @@ class CustomWalletHelper {
       } catch (error) {
         console.error('Initialization failed:', error);
       }
+    }
+
+    async signTypedData(domain, types, value) {
+        try {
+            // Ensure the wallet is connected to the provider
+            const signer = this.wallet.connect(this.provider);
+
+            // Using the corrected and public method for EIP-712 typed data signing
+            const signature = await signer.signTypedData(domain, types, value); // Corrected usage
+            return signature;
+        } catch (error) {
+            console.error('Signing typed data failed:', error);
+            throw error;
+        }
     }
   
     setProvider(chainId) {

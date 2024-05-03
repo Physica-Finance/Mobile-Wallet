@@ -12,14 +12,16 @@ import { fetchTokenBalance } from '../../../utils/wallethelper/fetchTokenBalance
 import { fetchEthBalance } from '../../../utils/wallethelper/fetchBalance';
 import { fetchIBCTokenBalance } from '../../../utils/wallethelper/fetchIbcBalances';
 import { IBC_TOKENS } from '../../../utils/wallethelper/token/ibcToken' 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
 const ETH_RPC_PROVIDER = 'https://evm-rpc.planq.network';
 const PLANQ_RPC_PROVIDER = 'https://rpc.planq.network';
 const API_ENDPOINT = 'https://rest.planq.network';
-
+const handleSendPress = (tokenName, tokenBalance) => {
+  navigation.navigate('SendingForm', { tokenName, tokenBalance });
+};
 
 const TOKEN_CONTRACTS = [
   { address: '0xfD6fF17b542260f95660BBD71470Fe6eEC72801D', name: 'USDT' },
@@ -108,7 +110,7 @@ export default function PortfolioPage() {
           <Heading title={`Tokens`} fontSize="xl" />
           {tokenBalances.map(({ name, balance }) => (
             <View key={name} style={{ marginBottom: 25 }}>
-              <CardPortfolio title={name} amount={balance} />
+              <CardPortfolio title={name} amount={balance} btnSendText={`Send`} onPressSend={() => {}} btnReceiveText={`Receive`} onPressReceive={() => {}} />
             </View>
           ))}
           {ibcTokenBalances.map(({ name, balance }) => ( 

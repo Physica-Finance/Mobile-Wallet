@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import 'react-native-get-random-values';
+import { crypto } from 'expo-crypto';
 import { generateWallet } from '../utils/wallethelper/generate'; // Adjust the import path as needed
 
 export default function GenerateWalletPage() {
@@ -31,7 +33,7 @@ export default function GenerateWalletPage() {
 
     return (
         <View style={styles.container}>
-            <Button title="Generate New Wallet" onPress={handleGenerateWallet} />
+            <Button title="Generate New Wallet" onPress={generateWallet()} />
             {wallet && (
                 <>
                     <Text style={styles.text}>Wallet Address: {wallet.ethAddress}</Text>

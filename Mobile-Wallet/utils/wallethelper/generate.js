@@ -1,6 +1,8 @@
-const { ethers } = require('ethers');
+const ethers = require('ethers');
 import * as SecureStore from 'expo-secure-store';
 import 'react-native-get-random-values';
+import 'react-native-get-random-values';
+import { crypto } from 'expo-crypto';
 const { convertToPlanqAddress } = require('./converter');
 
 async function generateWallet() {
@@ -9,7 +11,6 @@ async function generateWallet() {
     try {
         const randomWallet = ethers.Wallet.createRandom();
         const mnemonic = randomWallet.mnemonic.phrase;
-        // Correct method to create a wallet from a mnemonic
         const wallet = ethers.Wallet.fromPhrase(mnemonic); 
 
         console.log("New Wallet Address:", wallet.address);
