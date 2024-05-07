@@ -56,7 +56,7 @@
     "express": "^4.19.2",
     "http": "^0.0.1-security",
     "https-browserify": "^0.0.1",
-    "matrix-js-sdk": "^32.1.0",
+    "matrix-js-sdk": "^32.2.0",
     "nativewind": "^2.0.11",
     "path-browserify": "^0.0.0",
     "prettier": "^3.2.5",

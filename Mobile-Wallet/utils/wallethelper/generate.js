@@ -2,7 +2,6 @@ const ethers = require('ethers');
 import * as SecureStore from 'expo-secure-store';
 import 'react-native-get-random-values';
 import 'react-native-get-random-values';
-import { crypto } from 'expo-crypto';
 const { convertToPlanqAddress } = require('./converter');
 
 async function generateWallet() {
@@ -36,6 +35,8 @@ async function generateWallet() {
         // Save the wallet data as a JSON string
         await SecureStore.setItemAsync('Wallet', JSON.stringify(walletData));
         console.log('Wallet data saved securely.');
+
+        
 
         return walletData;
     } catch (error) {

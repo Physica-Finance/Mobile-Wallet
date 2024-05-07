@@ -1,68 +1,108 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { matrixClient } from '../../../utils/matrixClient';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import * as sdk from "matrix-js-sdk";
+import * as SecureStore from 'expo-secure-store';
 
 export default function ChatPage() {
   const [inputMessage, setInputMessage] = useState('');
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [selectedRoomId, setSelectedRoomId] = useState('!abcdefg:matrix.org'); // Example room ID
 
   useEffect(() => {
-    const onEvent = (event) => {
-      if (event.getType() === "m.room.message" && event.getRoomId() === selectedRoomId) {
-        setMessages(prevMessages => [...prevMessages, event.getContent().body]);
+    const fetchData = async () => {
+      try {
+        const credentialsJSON = await SecureStore.getItemAsync('userCredentials');
+        if (!credentialsJSON) {
+          console.error('User credentials not found, please log in.');
+          return;
+        }
+        const { userId, accessToken } = JSON.parse(credentialsJSON);
+
+        // Here we reinitialize the client with the stored credentials
+        const matrixClient = sdk.createClient({
+          baseUrl: "http://194.163.150.181:8008",
+          accessToken: accessToken,
+          userId: userId
+        });
+
+        matrixClient.startClient();
+
+        matrixClient.once('sync', state => {
+          if (state === 'PREPARED') {
+            setRooms(matrixClient.getRooms());
+          }
+        });
+      } catch (error) {
+        console.error('Sync failed:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const handler = event => {
+      if (event.getType() === 'm.room.message' && event.getRoomId() === selectedRoom?.roomId) {
+        setMessages(prevMessages => [...prevMessages, event]);
       }
     };
 
-    matrixClient.on("Room.timeline", onEvent);
-
+    matrixClient.on("Room.timeline", handler);
     return () => {
-      matrixClient.removeListener("Room.timeline", onEvent);
+      matrixClient.removeListener("Room.timeline", handler);
     };
-  }, [selectedRoomId]);
+  }, [selectedRoom]);
 
-  const sendMessage = () => {
-    if (inputMessage.trim() !== '') {
-      matrixClient.sendEvent(selectedRoomId, "m.room.message", {
-        body: inputMessage,
-        msgtype: "m.text"
-      }, "", (err, res) => {
-        if (err) {
-          console.error(err);
-        } else {
-          console.log("Message sent", res);
-        }
-      });
-      setInputMessage('');
+  const sendMessage = async () => {
+    if (inputMessage.trim() !== '' && selectedRoom) {
+      try {
+        await matrixClient.sendEvent(selectedRoom.roomId, "m.room.message", {
+          body: inputMessage,
+          msgtype: "m.text"
+        });
+        setInputMessage('');
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={messages}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.messageContainer}>
-            <Text style={styles.messageText}>{item}</Text>
-          </View>
-        )}
-        style={styles.messageList}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={inputMessage}
-          onChangeText={setInputMessage}
-          placeholder="Type your message..."
+      <ScrollView style={styles.sidebar}>
+        {rooms.map(room => (
+          <TouchableOpacity key={room.roomId} style={styles.roomItem} onPress={() => setSelectedRoom(room)}>
+            <Text style={styles.roomName}>{room.name || "Unnamed Room"}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+      <View style={styles.chatContainer}>
+        <FlatList
+          data={messages}
+          renderItem={({ item }) => (
+            <View style={styles.messageContainer}>
+              <Text style={styles.messageText}>{item.content.body}</Text>
+            </View>
+          )}
+          keyExtractor={item => item.event_id}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={inputMessage}
+            onChangeText={setInputMessage}
+            placeholder="Type your message..."
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -126,10 +166,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
-  },
-  sendButtonText: {
-    color: 'white',
-    fontSize: 16,
   },
   placeholderContainer: {
     flex: 1,
