@@ -204,18 +204,18 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-      <View className="flex flex-row w-full items-center">
+      <View className="flex flex-row items-center w-full">
         <TouchableOpacity onPress={buttonBack}>
           <Icon source="chevron-left" size={32} color="white" />
         </TouchableOpacity>
-        <View className="w-full items-center flex-auto mr-8 mb-2">
+        <View className="items-center flex-auto w-full mb-2 mr-8">
           <Text style={styles.text} className="text-lg font-bold text-center">
             Import From Seed
           </Text>
         </View>
       </View>
       {/* Input secton */}
-      <View className="flex flex-col w-full space-y-2 mt-16 flex-1">
+      <View className="flex flex-col flex-1 w-full mt-16 space-y-2">
         <FormInput
           type="password"
           error={errors.phrasesError}
@@ -261,7 +261,7 @@ export default function Page() {
           </View>
         </View>
       </View>
-      <View className="w-full pb-2 items-center">
+      <View className="items-center w-full pb-2">
         <Button
           mode="contained"
           onPress={importSeedPhrase}
